@@ -57,6 +57,8 @@ html,body{margin:0;height:100%;overflow:hidden;background:#eef2f7;color:var(--in
   color:var(--ink);display:grid;place-items:center;cursor:pointer;font-family:inherit}
 .icon-btn:active{background:#eef2f7}
 .icon-btn.sm{width:32px;height:32px}
+.icon-btn.xs{width:26px;height:23px;border-radius:7px;background:#f1f5f9;color:var(--ink2)}
+.icon-btn.xs:disabled{opacity:.28;background:transparent}
 .icon-btn.muted{color:#c3cedd}
 .icon-btn.danger{color:var(--danger)}
 
@@ -66,24 +68,21 @@ html,body{margin:0;height:100%;overflow:hidden;background:#eef2f7;color:var(--in
 #toolbar-scroll{flex:1 1 auto;min-width:0;display:flex;gap:5px;overflow-x:auto;
   scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:1px}
 #toolbar-scroll::-webkit-scrollbar{display:none}
-.tool{flex:0 0 auto;width:44px;height:48px;border-radius:13px;border:1px solid var(--line);
-  background:rgba(255,255,255,.97);box-shadow:0 3px 12px rgba(15,23,42,.14);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
-  color:var(--ink);cursor:pointer;font-family:inherit}
-.tool:active{transform:scale(.95)}
-.tool .tl{font-size:8px;font-weight:800;letter-spacing:.01em;color:var(--ink2);line-height:1}
+.tool{flex:0 0 auto;width:34px;height:34px;border-radius:10px;border:1px solid var(--line);
+  background:rgba(255,255,255,.97);box-shadow:0 2px 8px rgba(15,23,42,.12);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--ink);cursor:pointer;font-family:inherit;padding:0}
+.tool:active{transform:scale(.94)}
 .tool.on{background:var(--accent);border-color:var(--accent);color:#fff}
-.tool.on .tl{color:#fff}
+.tool.red{color:#e8382b}
 .tool.red.on{background:#e8382b;border-color:#e8382b}
+.tool.gr{color:#0fa958}
 .tool.gr.on{background:#0fa958;border-color:#0fa958}
 .tool.undo{color:#e8382b}
 .tool.redo{color:#0fa958}
 .tool:disabled{opacity:.32;cursor:default}
-.tool.done{display:none;background:#0f172a;border-color:#0f172a;color:#fff;width:52px}
-.tool.done .tl{color:#fff;font-size:10px}
+.tool.done{display:none;background:#0f172a;border-color:#0f172a;color:#fff;width:34px}
 body.placing .tool.done{display:flex}
-.redlbl{font-weight:900;font-size:11px;color:#e8382b;line-height:1;letter-spacing:-.03em}
-.tool.on .redlbl{color:#fff}
 
 /* paleta */
 #palette{position:absolute;left:0;right:0;bottom:0;z-index:1050;
@@ -218,6 +217,7 @@ textarea{resize:vertical;min-height:70px}
 
 /* filas / capas */
 .row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f1f5f9}
+.sym-ord{display:flex;flex-direction:column;gap:3px;flex:0 0 auto}
 .row:last-child{border-bottom:none}
 .row .grow{flex:1;min-width:0}
 .row .t{font-size:14px;font-weight:600;display:flex;align-items:center;gap:7px;min-width:0}
@@ -276,11 +276,6 @@ textarea{resize:vertical;min-height:70px}
 .pt-label:before{display:none}
 .dot-me{width:16px;height:16px;border-radius:50%;background:#1f6feb;border:3px solid #fff;
   box-shadow:0 0 0 2px rgba(31,111,235,.45),0 2px 6px rgba(0,0,0,.3)}
-.leaflet-top.leaflet-left{top:calc(var(--st) + 62px);left:6px}
-.leaflet-bottom.leaflet-left{bottom:calc(var(--sb) + 104px);left:6px}
-.leaflet-control-zoom{border:none !important;box-shadow:0 3px 12px rgba(15,23,42,.18) !important;border-radius:12px !important;overflow:hidden}
-.leaflet-control-zoom a{width:36px !important;height:36px !important;line-height:36px !important;
-  color:var(--ink) !important;background:#fff !important}
 .leaflet-container{font-family:inherit}
 
 /* toast */
@@ -320,13 +315,13 @@ textarea{resize:vertical;min-height:70px}
     <button class="tool redo" id="t-redo" title="Rehacer" aria-label="Rehacer"></button>
     <button class="tool" id="t-locate" title="Mi ubicación" aria-label="Mi ubicación"></button>
     <button class="tool" id="t-zone" title="Dibujar perímetro" aria-label="Dibujar perímetro"></button>
-    <button class="tool red" id="t-red" title="Líneas RED" aria-label="Líneas RED"><span class="redlbl">RED</span></button>
+    <button class="tool red" id="t-red" title="Líneas RED" aria-label="Líneas RED"></button>
     <button class="tool gr" id="t-free" title="Lápiz verde" aria-label="Lápiz verde"></button>
     <button class="tool" id="t-move" title="Mover símbolo o PIN" aria-label="Mover símbolo o PIN"></button>
     <button class="tool" id="t-erase" title="Borrar" aria-label="Borrar"></button>
     <button class="tool" id="t-clean" title="Limpiar perímetro" aria-label="Limpiar perímetro"></button>
   </div>
-  <button class="tool done" id="t-done" title="Listo" aria-label="Listo"><span class="tl">Listo</span></button>
+  <button class="tool done" id="t-done" title="Listo" aria-label="Listo"></button>
 </div>
 
 <div id="banner">
@@ -512,6 +507,7 @@ textarea{resize:vertical;min-height:70px}
   </div>
   <div class="sheet-body">
     <div class="section-title">Datos</div>
+    <button class="btn block" id="m-export-pins" style="margin-bottom:8px">Exportar PIN a Excel (.csv)</button>
     <button class="btn block" id="m-export" style="margin-bottom:8px">Exportar copia (.json)</button>
     <button class="btn block" id="m-import" style="margin-bottom:8px">Importar copia</button>
     <input type="file" id="import-file" accept="application/json,.json" class="hidden" />
@@ -676,11 +672,11 @@ const SYMBOL_SEED = [
   { id: 's-v',    kind: 'text', text: 'V', color: '#0fa958', uses: 0 },
   { id: 's-x',    kind: 'text', text: 'X', color: '#e8382b', uses: 0 },
   { id: 's-1',    kind: 'text', text: '1', color: '#0fa958', uses: 0 },
-  { id: 's-g1',   kind: 'text', text: 'G', color: '#e8382b', uses: 0 },
   { id: 's-2',    kind: 'text', text: '2', color: '#e8382b', uses: 0 },
   { id: 's-g2',   kind: 'text', text: 'G', color: '#0fa958', uses: 0 },
-  { id: 's-dotg', kind: 'dot',  color: '#0fa958', uses: 0 },
+  { id: 's-g1',   kind: 'text', text: 'G', color: '#e8382b', uses: 0 },
   { id: 's-dotr', kind: 'dot',  color: '#e8382b', uses: 0 },
+  { id: 's-dotg', kind: 'dot',  color: '#0fa958', uses: 0 },
   { id: 's-dog',  kind: 'dog',  color: '#e8382b', uses: 0 }
 ];
 
@@ -772,6 +768,19 @@ function loadDb() {
     db.marks.forEach((m) => { if (m.symbolId === 's-g3') m.symbolId = 's-g2'; });
     db.symbols = db.symbols.filter((s) => s.id !== 's-g3');
     db.settings.hiddenSymbols = (db.settings.hiddenSymbols || []).filter((x) => x !== 's-g3');
+  }
+  /* migración: orden inicial de símbolos (V, X, 1, 2, G verde, G rojo, puntos, perro) */
+  if (!db.settings.symOrder2) {
+    const order = SYMBOL_SEED.map((s) => s.id);
+    db.symbols.sort((a, b) => {
+      const ia = order.indexOf(a.id);
+      const ib = order.indexOf(b.id);
+      if (ia === -1 && ib === -1) return 0;
+      if (ia === -1) return 1;
+      if (ib === -1) return -1;
+      return ia - ib;
+    });
+    db.settings.symOrder2 = true;
   }
   /* migración: el rojo queda reservado para la herramienta RED */
   db.zones.forEach((z) => { if (String(z.color).toLowerCase() === '#e8382b') z.color = '#1f6feb'; });
@@ -946,8 +955,6 @@ function initMap() {
     maxZoom: 19, attribution: 'Imágenes &copy; Esri, Maxar, Earthstar Geographics'
   });
   (db.settings.base === 'sat' ? baseSat : baseStreets).addTo(map);
-
-  L.control.zoom({ position: 'topleft' }).addTo(map);
 
   zonesLayer = L.layerGroup().addTo(map);
   marksLayer = L.layerGroup().addTo(map);
@@ -2362,8 +2369,8 @@ function closeSheet(silent) {
 /* ==================================================================
    15. EXPORTAR / IMPORTAR
    ================================================================== */
-function download(filename, text) {
-  const blob = new Blob([text], { type: 'application/json' });
+function download(filename, text, mime) {
+  const blob = new Blob([text], { type: mime || 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = filename;
@@ -2411,6 +2418,38 @@ async function exportAll() {
   toast('Copia descargada (' + Object.keys(photos).length + ' fotos)');
 }
 
+function csvCell(v) {
+  const s = String(v == null ? '' : v);
+  return /[";\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+
+function exportPinsCsv() {
+  if (!db.pins.length) { toast('Todavía no hay PIN para exportar'); return; }
+
+  const rows = [['Nombre', 'Teléfono', 'Código país', 'Teléfono completo', 'Detalle', 'Zona', 'Latitud', 'Longitud', 'Fecha']];
+  db.pins.forEach((p) => {
+    const z = zoneById(effectiveZoneId(p));
+    rows.push([
+      p.name || '',
+      p.phone || '',
+      p.cc || '',
+      waNumber(p),
+      p.desc || '',
+      z ? z.name : '',
+      String(p.lat).replace('.', ','),
+      String(p.lng).replace('.', ','),
+      fmtDate(p.createdAt || p.updatedAt)
+    ]);
+  });
+
+  const d = new Date();
+  const stamp = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  const csv = '\uFEFF' + rows.map((r) => r.map(csvCell).join(';')).join('\r\n');
+
+  download('pines-' + stamp + '.csv', csv, 'text/csv;charset=utf-8');
+  toast('Lista exportada: ' + db.pins.length + ' PIN');
+}
+
 function importAll(file) {
   const reader = new FileReader();
   reader.onload = async () => {
@@ -2446,15 +2485,38 @@ function importAll(file) {
    16. GESTOR DE SÍMBOLOS
    ================================================================== */
 function renderSymbolsManager() {
-  $('#simbolos-list').innerHTML = sortedSymbols().map((s) => {
+  const list = sortedSymbols();
+  const chevUp = '<span style="display:inline-block;transform:rotate(180deg)">' + svgIcon('chev', 16) + '</span>';
+  const chevDown = svgIcon('chev', 16);
+
+  $('#simbolos-list').innerHTML = list.map((s, i) => {
     const n = db.marks.filter((m) => m.symbolId === s.id).length;
     return '<div class="row">' +
       '<div class="glyphbox">' + glyphMarkup(s) + '</div>' +
       '<div class="grow"><div class="t"><span class="txt">' + esc(symLabel(s)) + '</span></div>' +
       '<div class="s">' + n + ' colocado' + (n === 1 ? '' : 's') + '</div></div>' +
+      '<div class="sym-ord">' +
+        '<button class="icon-btn xs" data-upsym="' + esc(s.id) + '" title="Subir" aria-label="Subir"' +
+          (i === 0 ? ' disabled' : '') + '>' + chevUp + '</button>' +
+        '<button class="icon-btn xs" data-downsym="' + esc(s.id) + '" title="Bajar" aria-label="Bajar"' +
+          (i === list.length - 1 ? ' disabled' : '') + '>' + chevDown + '</button>' +
+      '</div>' +
       '<button class="icon-btn sm danger" data-delsym="' + esc(s.id) + '" title="Eliminar">' + svgIcon('trash', 17) + '</button>' +
       '</div>';
   }).join('');
+}
+
+function moveSymbol(id, dir) {
+  const i = db.symbols.findIndex((s) => s.id === id);
+  const j = i + dir;
+  if (i < 0 || j < 0 || j >= db.symbols.length) return;
+  const t = db.symbols[i];
+  db.symbols[i] = db.symbols[j];
+  db.symbols[j] = t;
+  db.settings.symOrder2 = true;
+  saveDb();
+  renderSymbolsManager();
+  renderAll();
 }
 
 function resetSymbolForm() {
@@ -2809,6 +2871,7 @@ function bindEvents() {
   });
 
   /* menú */
+  $('#m-export-pins').addEventListener('click', exportPinsCsv);
   $('#m-export').addEventListener('click', exportAll);
   $('#m-import').addEventListener('click', () => $('#import-file').click());
   $('#import-file').addEventListener('change', (e) => {
@@ -2839,7 +2902,11 @@ function bindEvents() {
   });
   $('#simbolos-list').addEventListener('click', (e) => {
     const del = e.target.closest('[data-delsym]');
-    if (del) deleteSymbol(del.dataset.delsym);
+    if (del) { deleteSymbol(del.dataset.delsym); return; }
+    const up = e.target.closest('[data-upsym]');
+    if (up) { moveSymbol(up.dataset.upsym, -1); return; }
+    const dn = e.target.closest('[data-downsym]');
+    if (dn) moveSymbol(dn.dataset.downsym, 1);
   });
 }
 
@@ -2867,14 +2934,16 @@ function paintIcons() {
   $('#btn-layers').innerHTML = svgIcon('layers', 20);
   $('#btn-menu').innerHTML = svgIcon('menu', 20);
 
-  $('#t-undo').innerHTML = svgIcon('undo', 19) + '<span class="tl">Deshacer</span>';
-  $('#t-redo').innerHTML = svgIcon('redo', 19) + '<span class="tl">Rehacer</span>';
-  $('#t-locate').innerHTML = svgIcon('target', 20) + '<span class="tl">GPS</span>';
-  $('#t-zone').innerHTML = svgIcon('rect', 20) + '<span class="tl">Zona</span>';
-  $('#t-free').innerHTML = svgIcon('pencil', 19) + '<span class="tl">Lápiz</span>';
-  $('#t-move').innerHTML = svgIcon('move', 19) + '<span class="tl">Mover</span>';
-  $('#t-erase').innerHTML = svgIcon('trash', 19) + '<span class="tl">Borrar</span>';
-  $('#t-clean').innerHTML = svgIcon('eraser', 19) + '<span class="tl">Limpiar</span>';
+  $('#t-undo').innerHTML = svgIcon('undo', 18);
+  $('#t-redo').innerHTML = svgIcon('redo', 18);
+  $('#t-locate').innerHTML = svgIcon('target', 18);
+  $('#t-zone').innerHTML = svgIcon('rect', 18);
+  $('#t-red').innerHTML = svgIcon('line', 18);
+  $('#t-free').innerHTML = svgIcon('pencil', 17);
+  $('#t-move').innerHTML = svgIcon('move', 17);
+  $('#t-erase').innerHTML = svgIcon('trash', 17);
+  $('#t-clean').innerHTML = svgIcon('eraser', 17);
+  $('#t-done').innerHTML = svgIcon('check', 18);
 
   $('#b-gps').innerHTML = svgIcon('target', 16) + ' Mi GPS';
   $('#b-undo').innerHTML = 'Deshacer';
@@ -2887,6 +2956,7 @@ function paintIcons() {
   $('#ic-green').innerHTML = svgIcon('pencil', 16);
   $$('.x').forEach((x) => { x.innerHTML = svgIcon('x', 18); });
   $('#foto-btn').innerHTML = svgIcon('camera', 18) + ' Agregar foto';
+  $('#m-export-pins').innerHTML = svgIcon('down', 18) + ' Exportar PIN a Excel (.csv)';
   $('#m-export').innerHTML = svgIcon('down', 18) + ' Exportar copia (.json)';
   $('#m-import').innerHTML = svgIcon('up', 18) + ' Importar copia';
   $('#m-symbols').innerHTML = svgIcon('gear', 18) + ' Gestionar símbolos';
